@@ -22,10 +22,9 @@ std::string APIHandler::fetchPrice(const std::string& ticker)
 	if (curl)
 	{
 		//TODO: REDO API CALL TO FINNHUB'S TO ACCESS MORE IMPORTANT INFORMATION LIKE TICKER PRICE
-		//TOKEN: d15dj29r01qhqto566ogd15dj29r01qhqto566p0
 		//WEBSITE: https://finnhub.io/docs/api/open-data
-
-		std::string url = "https://finnhub.io/api/v1/quote?symbol=" + ticker + "&token=d15dj29r01qhqto566ogd15dj29r01qhqto566p0";
+		std::string token = "harhar"; //Nothing to see here
+		std::string url = "https://finnhub.io/api/v1/quote?symbol=" + ticker + "&token=" + token;
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
@@ -110,10 +109,10 @@ std::string APIHandler::fetchProfile(const std::string& ticker)
 	if (curl)
 	{
 		//TODO: REDO API CALL TO FINNHUB'S TO ACCESS MORE IMPORTANT INFORMATION LIKE TICKER PRICE
-		//TOKEN: d15dj29r01qhqto566ogd15dj29r01qhqto566p0
+		
 		//WEBSITE: https://finnhub.io/docs/api/open-data
-
-		std::string url = "https://finnhub.io/api/v1/search?q=" + ticker + "&exchange=US&token=d15dj29r01qhqto566ogd15dj29r01qhqto566p0";
+		std::string token = "blah blah"; //First time seriously using GitHub for a project, forgor to change this
+		std::string url = "https://finnhub.io/api/v1/search?q=" + ticker + "&exchange=US&token=" + token;
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
