@@ -175,6 +175,7 @@ std::string APIHandler::fetchProfile(const std::string& ticker)
 		}
 		std::cout << "\n";
 	}
+	return "";//SIGHHHHHH RETURN AN EMPTY STRING AT LEAST SO THIS THING STOPS CRASHING
 }
 
 

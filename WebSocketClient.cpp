@@ -6,8 +6,9 @@ WebSocketClient::WebSocketClient()
 	client.init_asio();
 	client.set_open_handler([this](websocketpp::connection_hdl hdl)
 		{
+			std::lock_guard<std::mutex> lock(connection_mutex);
 			connection_hdl = hdl;
-			std::cout << "Connection opened. " << std::endl;
+			std::cout << "Connection opened." << std::endl;
 		});
 
 	client.set_message_handler([this](websocketpp::connection_hdl,
@@ -21,7 +22,7 @@ WebSocketClient::WebSocketClient()
 
 	client.set_fail_handler([](websocketpp::connection_hdl)
 		{
-			std::cout << "Connection failed. " << std::endl;
+			std::cout << "Connection failed." << std::endl;
 		});
 	client.set_close_handler([](websocketpp::connection_hdl) {
 

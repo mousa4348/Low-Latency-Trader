@@ -10,6 +10,7 @@ private:
 public:
 	DatabaseManager(const std::string& name);
 	~DatabaseManager();
-	bool execute(const std::string& sql)
+	bool execute(const std::string& sql);
+	sqlite3* getDB() const { return db; }
 };
 

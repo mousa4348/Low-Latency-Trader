@@ -2,6 +2,7 @@
 #include "libraries.h"
 #include <iostream>
 #include <string>
+#include <mutex>
 
 class WebSocketClient
 {
@@ -19,7 +20,5 @@ private:
 	websocketpp::client<websocketpp::config::asio_client> client;
 	websocketpp::connection_hdl connection_hdl;
 	on_message_callback message_callback;
-
-
-
+	std::mutex connection_mutex; 
 };
