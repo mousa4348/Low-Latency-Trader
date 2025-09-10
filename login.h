@@ -16,7 +16,11 @@ public:
 	Login(string NewuserID, string Newpassword) : userID(NewuserID), password(Newpassword) {};
 	void createAccount(string userID, string password, string firstName, string lastName, DatabaseManager db);
 	bool password_check(string password);
-	bool password_change(const string& userID, string& password, string& newPassword, DatabaseManager& db);
+	bool password_change(const string& userID, string& password, string& newPassword, DatabaseManager& db);\
+		string getUserID() { return userID; }
+	void setUserID(string newUserID) { userID = newUserID; }
+	string getPassword() { return password;  }
+	void setPassword(string newPassword) { password = newPassword;  } 
 
 
 

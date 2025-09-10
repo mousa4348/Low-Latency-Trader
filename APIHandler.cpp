@@ -23,7 +23,7 @@ std::string APIHandler::fetchPrice(const std::string& ticker)
 	{
 		//TODO: REDO API CALL TO FINNHUB'S TO ACCESS MORE IMPORTANT INFORMATION LIKE TICKER PRICE
 		//WEBSITE: https://finnhub.io/docs/api/open-data
-		std::string token = "harhar"; //Nothing to see here
+		std::string token = "d2nq9lpr01qsrqkpl7mgd2nq9lpr01qsrqkpl7n0"; //Nothing to see here
 		std::string url = "https://finnhub.io/api/v1/quote?symbol=" + ticker + "&token=" + token;
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);

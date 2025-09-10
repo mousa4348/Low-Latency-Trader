@@ -6,7 +6,7 @@ void Balance::addToBalance(double AmtToAdd)
 {
 	balanceAmt += AmtToAdd;
 	std::cout << std::fixed << std::setprecision(2);
-	std::cout << "Added $" << AmtToAdd << " to your account! Current Balance: $" << balanceAmt;
+	std::cout << "Added $" << AmtToAdd << " to your account! Current Balance: $" << balanceAmt << "\n";
 
 }
 
@@ -16,11 +16,11 @@ void Balance::SubtFromBalance(double AmtToSubt)
 	{
 		std::cout << std::fixed << std::setprecision(2);
 		balanceAmt -= AmtToSubt;
-		std::cout << "Removed $" << AmtToSubt << " from your account! Current Balance: $" << balanceAmt;
+		std::cout << "Removed $" << AmtToSubt << " from your account! Current Balance: $" << balanceAmt << "\n";
 	}
 	else
 	{
-		std::cout << "Not Enough Funds. Please add more to complete this transaction. ";
+		std::cout << "Not Enough Funds. Please add more to complete this transaction. \n";
 		
 	}
 	
@@ -33,5 +33,5 @@ bool Balance::isEnough(double AmtToSubt)
 void Balance::display() const
 {
 	std::cout << std::fixed << std::setprecision(2);
-	std::cout << "\nCurrent Balance: $" << balanceAmt;
+	std::cout << "\nCurrent Balance: $" << balanceAmt << "\n";
 }

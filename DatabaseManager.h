@@ -12,5 +12,6 @@ public:
 	~DatabaseManager();
 	bool execute(const std::string& sql);
 	sqlite3* getDB() const { return db; }
+	void databaseCheck(DatabaseManager& db, std::string& userID);
 };
 

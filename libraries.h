@@ -26,6 +26,7 @@ Use these header files for their .cpp counterparts.
 #include "StockTrading.h"
 #include "Balance.h"
 #include "DatabaseManager.h"
+#include "login.h"
 
 /*
  Use the rapidJSON libraries to do, at the least, basic JSON file parsing to extract necessary data

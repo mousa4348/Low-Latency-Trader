@@ -30,7 +30,9 @@ public:
 	void setStock(std::unordered_map<std::string, int> newStock) { stock = newStock; }
 	void buy(const std::string& ticker, int quantity, std::unique_ptr<Balance>& balance);
 	void sell(const std::string& ticker, int quantity, std::unique_ptr<Balance>& balance);
+	double current_price(const std::string& ticker);
 	void display() const;
+
 	
 };
 

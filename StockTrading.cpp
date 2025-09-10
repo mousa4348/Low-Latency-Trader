@@ -56,6 +56,19 @@ void StockTrade::sell(const std::string& ticker, int quantity, std::unique_ptr<B
 	balance->display();
 
 }
+
+double StockTrade::current_price(const std::string& ticker)
+{
+	std::string strPrice = api.fetchPrice(ticker);
+	if (strPrice.empty())
+	{
+		std::cout << "Reusult is empty. Try again!\n";
+		return 0;
+	}
+	double price = std::stod(strPrice);
+	return price;
+}
+
 void StockTrade::display() const
 {
 	std::cout << "\nCurrent shares: \n";

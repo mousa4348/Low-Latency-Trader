@@ -7,9 +7,10 @@
 #include "WebSocketClient.h"
 #include "libraries.h"
 
-void balance_hub();
+void balance_hub(std::unique_ptr<Balance>& balance, DatabaseManager& db);
 void stock_check();
-void stock_sale();
+void stock_sale(std::unique_ptr<Balance>& balance);
+void database_check();
 
 
 int main()
@@ -22,11 +23,9 @@ int main()
 
 	*/
 	DatabaseManager db("Balance.db");
-	db.execute("CREATE TABLE IF NOT EXISTS User(UserID TEXT PRIMARY KEY, Password TEXT NOT NULL");//Creates table to store accounts;
-	db.execute("firstName TEXT NOT NULL, lastName TEXT NOT NULL);");//Finishes query
+	db.execute("CREATE TABLE IF NOT EXISTS User(UserID TEXT PRIMARY KEY, Password TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL);");//Finishes query
 	db.execute("CREATE TABLE IF NOT EXISTS Balance( ID INT PRIMARY KEY, Amount REAL NOT NULL);");
 
-	db.execute("INSERT INTO User (UserID, Password) VALUES (mousa4348, 28075442Amr);");
 	//For now, create my own login to test out later.
 	//Implement a login page where the user cant access the page unless the login information is correct
 
@@ -34,15 +33,16 @@ int main()
 	StockTrade trader;
 	APIHandler api;
 	std::unique_ptr<Balance> balance = std::make_unique<Balance>();
-	std::string token = "d15dj29r01qhqto566ogd15dj29r01qhqto566p0";
-	std::string url = "wss://ws.finnhub.io/?token=" + token;
+	std::string token = "d2nq9lpr01qsrqkpl7mgd2nq9lpr01qsrqkpl7n0";
+	std::string url = "wss://ws.finnhub.io?token=" + token;
 	std::string input;
 	int options;
 	std::cout << "Welcome to Mousa'a Low Latency Trader! Please select one of the following options \n";
 	std::cout << std::setw(90) << std::setfill('_') << "\n";
 	std::cout << "| 1. Buy/Sell Stocks ";
 	std::cout << "| 2. Check a stock ";
-	std::cout << "| 3. Balance Hub |\n";
+	std::cout << "| 3. Balance Hub |";
+	std::cout << "| 4. Database Check |\n";
 	std::cout << "\nOption: ";
 	std::cin >> options;
 
@@ -75,7 +75,7 @@ int main()
 		if (options == 1)
 		{
 			auto start = std::chrono::high_resolution_clock::now();
-			std::thread stockThread(stock_sale);
+			std::thread stockThread(stock_sale, std::ref(balance));//IMPORTANT: Use the std::ref() specifier to pass reference objects into threads!
 			stockThread.join();
 			auto end = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<double> time = end - start;
@@ -97,16 +97,27 @@ int main()
 		{
 			
 			auto start = std::chrono::high_resolution_clock::now();
-			std::thread balanceThread(balance_hub);
+			std::thread balanceThread(balance_hub, std::ref(balance), std::ref(db)); //IMPORTANT: Use the std::ref() specifier to pass reference objects into threads!
 			balanceThread.join();
 			auto end = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<double> time = end - start;
 			std::cout << "Time taken for stock sale: " << time << " ms\n";
 		}
+		else if (options == 4)
+		{
+			auto start = std::chrono::high_resolution_clock::now();
+			std::thread databaseCheckThread(database_check);
+			databaseCheckThread.join();
+			auto end = std::chrono::high_resolution_clock::now();
+			std::chrono::duration<double> time = end - start;
+			std::cout << "Time taken for database check: " << time << " ms\n";
+		}
 		else
 		{
 			std::cout << "Invalid option. Please enter a different option: ";
-			std::cin >> options;
+			//std::cin >> options;
+			//Uncomment later: For now, exit the program if the option is invalid
+			return -1;
 		}
 		std::cout << "\nSelect a different option: ";
 		std::cin >> options;
@@ -116,14 +127,11 @@ int main()
 	return 0;
 }
 
-void balance_hub()
+void balance_hub(std::unique_ptr<Balance>& balance, DatabaseManager& db)
 {
-	DatabaseManager db("Balance.db");
-	std::unique_ptr<Balance> balance = std::make_unique<Balance>();
 
-	double amt;
 	std::string options;
-	std::cout << "Welcome to the balance center! Would you like to check (\"check\") your balance or add a balance(\"add\") ? ";
+	std::cout << "Welcome to the balance center! Would you like to check (\"check\") your balance or add a balance(\"add\")? ";
 	std::cin >> options;
 	if (options == "check")
 	{
@@ -131,11 +139,12 @@ void balance_hub()
 	}
 	else if (options == "add")
 	{
-		if (amt == -1) exit(1);
-
+		double amt = 0.0;
+		std::cout << "Enter the amount you would like to add: ";
+		std::cin >> amt;
 		std::cout << "\n";
 		balance->addToBalance(amt);
-		db.execute("INSERT INTO Balance (Amount) VALUES (" + std::to_string(amt) + ");");
+		//db.execute("UPDATE Balance SET Amount = " + std::to_string(balance->getBalanceAmt()) + "WHERE ID = 1;");
 		//Inserts the amount entered into the query
 	}
 	else
@@ -145,22 +154,32 @@ void balance_hub()
 	}
 
 }
+void database_check()
+{
+	Login login("", "");
+	std::string userID = login.getUserID();
+	DatabaseManager db("User");
+	db.databaseCheck(db, userID);
+}
 void stock_check()
 {
 	std::string input;
 	APIHandler api;
-	std::cout << "Enter a stock symbol. It must be valid: ";
-	std::cin >> input;
-	std::string result = api.fetchPrice(input);
-	std::string result2 = api.fetchProfile(input);
+	while (input != "-1")
+	{
+		std::cout << "Enter a stock symbol. It must be valid: ";
+		std::cin >> input;
+		auto result = std::async(std::launch::async, &APIHandler::fetchPrice, &api, input);
+		auto result2 = std::async(std::launch::async, &APIHandler::fetchProfile, &api, input);
+	}
+	exit(1);
 }
 
-void stock_sale()
+void stock_sale(std::unique_ptr<Balance>& balance)
 {
 	int options;
 	std::string input;
 	StockTrade trader;
-	std::unique_ptr<Balance> balance = std::make_unique<Balance>();
 	double balAmt = balance->getBalanceAmt();
 	int quantity;
 	if (balAmt <= 0)
@@ -176,6 +195,7 @@ void stock_sale()
 		balance->display();
 		std::cout << "\n\nWelcome to the buy station! Enter the stock that you would like to purchase: ";
 		std::cin >> input;
+		std::cout << input << " is valued at " << trader.current_price(input) << ".\n";
 		std::cout << "Enter the amount you would like to purchase: ";
 		std::cin >> quantity;
 
